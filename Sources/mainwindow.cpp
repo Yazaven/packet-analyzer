@@ -32,11 +32,10 @@ void* snifferThread(void* data) {
 
     ThreadData* threadData = static_cast<ThreadData*>(data);
     threadData->tableWidget->setRowCount(10);
-    threadData->tableWidget->setItem(1, 1, new QTableWidgetItem(QString("ds")));
 
     int fd = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
     if (fd < 0) {
-        // Handle error/
+
         return nullptr;
     }
     int size=0;
@@ -44,186 +43,186 @@ void* snifferThread(void* data) {
 
     int i=0;
     while (true) {
-             memset(buffer,0,sizeof(buffer));
-            if(fd>0){
-        size=recvfrom(fd,buffer,sizeof(buffer),0,0,0);
-        if(size>0){
+        memset(buffer,0,sizeof(buffer));
+        if(fd>0){
+            size=recvfrom(fd,buffer,sizeof(buffer),0,0,0);
+            if(size>0){
 
-        std::unique_ptr<Snifed> ptr = std::make_unique<Snifed>(buffer);
+                std::unique_ptr<Snifed> ptr = std::make_unique<Snifed>(buffer);
 
 
-        //  memcpy(test.Pname,sniffer->getIPhdr().Pname,sizeof(char)*4);
-        //  if(strncmp(test.Pname,"tcp",3)){
-        if(ptr->getIPhdr()!=nullptr){
-            std::unique_ptr<Ui::myip> ipData = std::make_unique<Ui::myip>(*ptr->getIPhdr());
-            Ui::myip* myipInstance = new Ui::myip(ptr->getIPhdr());
-            threadData->mainwin->ipvector.push_back(std::move(myipInstance)); // Move ownership to the vector
+                //  memcpy(test.Pname,sniffer->getIPhdr().Pname,sizeof(char)*4);
+                //  if(strncmp(test.Pname,"tcp",3)){
+                if(ptr->getIPhdr()!=nullptr){
+                    std::unique_ptr<Ui::myip> ipData = std::make_unique<Ui::myip>(*ptr->getIPhdr());
+                    Ui::myip* myipInstance = new Ui::myip(ptr->getIPhdr());
+                    threadData->mainwin->ipvector.push_back(std::move(myipInstance)); // Move ownership to the vector
 
-            if(!host.empty()){
-                if(isAscii(host) && isAscii(ptr->getIPhdr()->Sadder)){
-               // threadData->tableWidget->setItem(i, 2, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Sadder)));
-             //   threadData->tableWidget->setItem(i, 3, new QTableWidgetItem(QString::fromStdString(host)));
+                    if(!host.empty()){
+                        if(isAscii(host) && isAscii(ptr->getIPhdr()->Sadder)){
+                            // threadData->tableWidget->setItem(i, 2, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Sadder)));
+                            //   threadData->tableWidget->setItem(i, 3, new QTableWidgetItem(QString::fromStdString(host)));
 
-             //   i++;
+                            //   i++;
+                        }
+                        if(host==ptr->getIPhdr()->Sadder) {
+                            threadData->tableWidget->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Transportl)));
+                            threadData->tableWidget->setItem(i, 2, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Sadder)));
+                            threadData->tableWidget->setItem(i, 3, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Dadder)));
+
+                            i++;
+                            if(10<=i){
+                                threadData->tableWidget->setRowCount(i+1);
+
+                            }
+                        }
+                        continue;
+
+
+                    }
+
+                    if(minport!=0){
+                        switch (ind){
+                        case 0:
+                            if (minport <= ptr->getIPhdr()->sport && ptr->getIPhdr()->sport <= maxport || minport <= ptr->getIPhdr()->dport && ptr->getIPhdr()->dport <= maxport) {
+                                threadData->tableWidget->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Transportl)));
+                                threadData->tableWidget->setItem(i, 2, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Sadder)));
+                                threadData->tableWidget->setItem(i, 3, new QTableWidgetItem(QString(QString::number(ptr->getIPhdr()->sport))));
+                                i++;
+                                if(10<=i){
+                                    threadData->tableWidget->setRowCount(i+1);
+
+                                }
+                            }
+                            break;
+
+                        case 1:
+                            if (minport <= ptr->getIPhdr()->sport && ptr->getIPhdr()->sport <= maxport) {
+                                threadData->tableWidget->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Transportl)));
+                                threadData->tableWidget->setItem(i, 2, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Sadder)));
+                                threadData->tableWidget->setItem(i, 3, new QTableWidgetItem(QString(QString::number(ptr->getIPhdr()->sport))));
+                                i++;
+                                if(10<=i){
+                                    threadData->tableWidget->setRowCount(i+1);
+
+                                }
+                            }
+                            break;
+                        case 2:
+                            if (minport <= ptr->getIPhdr()->dport <=maxport) {
+                                threadData->tableWidget->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Transportl)));
+                                threadData->tableWidget->setItem(i, 2, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Sadder)));
+                                threadData->tableWidget->setItem(i, 3, new QTableWidgetItem(QString(QString::number(ptr->getIPhdr()->dport))));
+                                i++;
+                                if(10<=i){
+                                    threadData->tableWidget->setRowCount(i+1);
+
+                                }
+                            }
+                            break;
+
+                        case 3:
+                            if(("tcp"==ptr->getIPhdr()->Transportl)&&(minport <= ptr->getIPhdr()->sport && ptr->getIPhdr()->sport <= maxport || minport <= ptr->getIPhdr()->dport && ptr->getIPhdr()->dport <= maxport)){
+                                threadData->tableWidget->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Transportl)));
+                                threadData->tableWidget->setItem(i, 2, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Sadder)));
+                                threadData->tableWidget->setItem(i, 3, new QTableWidgetItem(QString(QString::number(ptr->getIPhdr()->sport))));
+                                i++;
+                                if(10<=i){
+                                    threadData->tableWidget->setRowCount(i+1);
+
+                                }
+                            }
+                            break;
+                        case 7:
+                            if(("udp"==ptr->getIPhdr()->Transportl)&&(minport <= ptr->getIPhdr()->sport && ptr->getIPhdr()->sport <= maxport || minport <= ptr->getIPhdr()->dport && ptr->getIPhdr()->dport <= maxport)){
+                                threadData->tableWidget->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Transportl)));
+                                threadData->tableWidget->setItem(i, 2, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Sadder)));
+                                threadData->tableWidget->setItem(i, 3, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Dadder)));
+                                i++;
+                                if(10<=i){
+                                    threadData->tableWidget->setRowCount(i+1);
+
+                                }
+                            }
+                            break;
+
+                        case 4:
+                            if((("tcp"==ptr->getIPhdr()->Transportl))&&(minport <= ptr->getIPhdr()->sport && ptr->getIPhdr()->sport <= maxport)){
+                                threadData->tableWidget->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Transportl)));
+                                threadData->tableWidget->setItem(i, 2, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Sadder)));
+                                threadData->tableWidget->setItem(i, 3, new QTableWidgetItem((QString::number(ptr->getIPhdr()->sport))));
+                                i++;
+                                if(10<=i){
+                                    threadData->tableWidget->setRowCount(i+1);
+
+                                }
+                            }
+                            break;
+
+                        case 5:
+                            if(("tcp"==ptr->getIPhdr()->Transportl)&&(minport <= ptr->getIPhdr()->dport && ptr->getIPhdr()->dport <= maxport)){
+                                threadData->tableWidget->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Transportl)));
+                                threadData->tableWidget->setItem(i, 2, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Sadder)));
+                                threadData->tableWidget->setItem(i, 3, new QTableWidgetItem(QString(QString::number(ptr->getIPhdr()->sport))));
+                                i++;
+                                if(10<=i){
+                                    threadData->tableWidget->setRowCount(i+1);
+
+                                }
+                            }
+                            break;
+
+                        case 8:
+                            if(("udp"==ptr->getIPhdr()->Transportl)&&(minport <= ptr->getIPhdr()->sport && ptr->getIPhdr()->sport <= maxport)){
+                                threadData->tableWidget->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Transportl)));
+                                threadData->tableWidget->setItem(i, 2, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Sadder)));
+                                threadData->tableWidget->setItem(i, 3, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Dadder)));
+                                i++;
+                                if(10<=i){
+                                    threadData->tableWidget->setRowCount(i+1);
+
+                                }
+                            }
+                            break;
+
+                        case 9:
+                            if(("udp"==ptr->getIPhdr()->Transportl)&&(minport <= ptr->getIPhdr()->dport && ptr->getIPhdr()->dport <= maxport)){
+                                threadData->tableWidget->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Transportl)));
+                                threadData->tableWidget->setItem(i, 2, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Sadder)));
+                                threadData->tableWidget->setItem(i, 3, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Dadder)));
+                                i++;
+                                if(10<=i){
+                                    threadData->tableWidget->setRowCount(i+1);
+                                }
+                            }
+                            break;
+
+
+
+
+
+
+
+                        }
+                    }else{
+                        threadData->tableWidget->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Transportl)));
+                        threadData->tableWidget->setItem(i, 2, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Sadder)));
+                        threadData->tableWidget->setItem(i, 3, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Dadder)));
+                        threadData->tableWidget->setItem(i, 4, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->msg)));
+
+                        i++;
+                        if(10<=i){
+                            threadData->tableWidget->setRowCount(i+1);
+
+                        }
+
+
+                    }
+
+
                 }
-                if(host==ptr->getIPhdr()->Sadder) {
-               threadData->tableWidget->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Transportl)));
-                threadData->tableWidget->setItem(i, 2, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Sadder)));
-                threadData->tableWidget->setItem(i, 3, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Dadder)));
-
-                i++;
-                if(10<=i){
-                    threadData->tableWidget->setRowCount(i+1);
-
-                }
-                }
-                continue;
-
-
             }
-
-            if(minport!=0){
-                switch (ind){
-                   case 0:
-                    if (minport <= ptr->getIPhdr()->sport && ptr->getIPhdr()->sport <= maxport || minport <= ptr->getIPhdr()->dport && ptr->getIPhdr()->dport <= maxport) {
-                    threadData->tableWidget->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Transportl)));
-                           threadData->tableWidget->setItem(i, 2, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Sadder)));
-                           threadData->tableWidget->setItem(i, 3, new QTableWidgetItem(QString(QString::number(ptr->getIPhdr()->sport))));
-                           i++;
-                           if(10<=i){
-                               threadData->tableWidget->setRowCount(i+1);
-
-                           }
-                       }
-                       break;
-
-                   case 1:
-                       if (minport <= ptr->getIPhdr()->sport && ptr->getIPhdr()->sport <= maxport) {
-                           threadData->tableWidget->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Transportl)));
-                           threadData->tableWidget->setItem(i, 2, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Sadder)));
-                           threadData->tableWidget->setItem(i, 3, new QTableWidgetItem(QString(QString::number(ptr->getIPhdr()->sport))));
-                           i++;
-                           if(10<=i){
-                               threadData->tableWidget->setRowCount(i+1);
-
-                           }
-                       }
-                       break;
-                case 2:
-                       if (minport <= ptr->getIPhdr()->dport <=maxport) {
-                           threadData->tableWidget->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Transportl)));
-                           threadData->tableWidget->setItem(i, 2, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Sadder)));
-                           threadData->tableWidget->setItem(i, 3, new QTableWidgetItem(QString(QString::number(ptr->getIPhdr()->dport))));
-            i++;
-            if(10<=i){
-                threadData->tableWidget->setRowCount(i+1);
-
-            }
-                }
-                break;
-
-                case 3:
-                if(("tcp"==ptr->getIPhdr()->Transportl)&&(minport <= ptr->getIPhdr()->sport && ptr->getIPhdr()->sport <= maxport || minport <= ptr->getIPhdr()->dport && ptr->getIPhdr()->dport <= maxport)){
-            threadData->tableWidget->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Transportl)));
-            threadData->tableWidget->setItem(i, 2, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Sadder)));
-            threadData->tableWidget->setItem(i, 3, new QTableWidgetItem(QString(QString::number(ptr->getIPhdr()->sport))));
-            i++;
-            if(10<=i){
-                threadData->tableWidget->setRowCount(i+1);
-
-            }
-                }
-                break;
-                case 7:
-                if(("udp"==ptr->getIPhdr()->Transportl)&&(minport <= ptr->getIPhdr()->sport && ptr->getIPhdr()->sport <= maxport || minport <= ptr->getIPhdr()->dport && ptr->getIPhdr()->dport <= maxport)){
-            threadData->tableWidget->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Transportl)));
-            threadData->tableWidget->setItem(i, 2, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Sadder)));
-            threadData->tableWidget->setItem(i, 3, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Dadder)));
-            i++;
-            if(10<=i){
-                threadData->tableWidget->setRowCount(i+1);
-
-            }
-                }
-                break;
-
-                case 4:
-                if((("tcp"==ptr->getIPhdr()->Transportl))&&(minport <= ptr->getIPhdr()->sport && ptr->getIPhdr()->sport <= maxport)){
-            threadData->tableWidget->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Transportl)));
-            threadData->tableWidget->setItem(i, 2, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Sadder)));
-            threadData->tableWidget->setItem(i, 3, new QTableWidgetItem((QString::number(ptr->getIPhdr()->sport))));
-            i++;
-            if(10<=i){
-                threadData->tableWidget->setRowCount(i+1);
-
-            }
-                }
-                break;
-
-                case 5:
-                if(("tcp"==ptr->getIPhdr()->Transportl)&&(minport <= ptr->getIPhdr()->dport && ptr->getIPhdr()->dport <= maxport)){
-            threadData->tableWidget->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Transportl)));
-            threadData->tableWidget->setItem(i, 2, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Sadder)));
-            threadData->tableWidget->setItem(i, 3, new QTableWidgetItem(QString(QString::number(ptr->getIPhdr()->sport))));
-            i++;
-            if(10<=i){
-                threadData->tableWidget->setRowCount(i+1);
-
-            }
-                }
-                break;
-
-                case 8:
-                if(("udp"==ptr->getIPhdr()->Transportl)&&(minport <= ptr->getIPhdr()->sport && ptr->getIPhdr()->sport <= maxport)){
-            threadData->tableWidget->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Transportl)));
-            threadData->tableWidget->setItem(i, 2, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Sadder)));
-            threadData->tableWidget->setItem(i, 3, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Dadder)));
-            i++;
-            if(10<=i){
-                threadData->tableWidget->setRowCount(i+1);
-
-            }
-                }
-                break;
-
-                case 9:
-                if(("udp"==ptr->getIPhdr()->Transportl)&&(minport <= ptr->getIPhdr()->dport && ptr->getIPhdr()->dport <= maxport)){
-            threadData->tableWidget->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Transportl)));
-            threadData->tableWidget->setItem(i, 2, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Sadder)));
-            threadData->tableWidget->setItem(i, 3, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Dadder)));
-            i++;
-            if(10<=i){
-                threadData->tableWidget->setRowCount(i+1);
-            }
-                }
-                break;
-
-
-
-
-
-
-
-                }
-            }else{
-                threadData->tableWidget->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Transportl)));
-                threadData->tableWidget->setItem(i, 2, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Sadder)));
-                threadData->tableWidget->setItem(i, 3, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Dadder)));
-                threadData->tableWidget->setItem(i, 4, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->msg)));
-
-            i++;
-            if(10<=i){
-                threadData->tableWidget->setRowCount(i+1);
-
-            }
-
-
-            }
-
-
-        }
-        }
-        // threadData->tableWidget->setItem(0, 1, new QTableWidgetItem(QString(*test.Pname)));
+            // threadData->tableWidget->setItem(0, 1, new QTableWidgetItem(QString(*test.Pname)));
         }
     }
     close(fd);
@@ -237,9 +236,6 @@ void* snifferThread(void* data) {
 MainWindow::MainWindow(QWidget *parent): QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
-
-
-    // Add the layout to the central widget of the main window
 
     ui->setupUi(this);
 
@@ -265,9 +261,6 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent)
 
 MainWindow::~MainWindow()
 {
-    // Cleanup resources, join the thread, and delete the thread data
-    //pthread_join(thread, nullptr);
-    // delete threadData;
 
     delete ui;
 }

@@ -2,7 +2,7 @@
 
 
 Snifed::~Snifed() {
-    // No need to explicitly release myheader_ip, std::unique_ptr will handle it.
+
 }
 
 Snifed::Snifed(char *buffer)
@@ -24,39 +24,101 @@ Snifed::Snifed(char *buffer)
     strcpy(destMacStr, ether_ntoa(&dest));
     myheader_ip->Dmacaddr = destMacStr;
 
+    myheader_ip->Internetl="test";
+    myheader_ip->Transportl="test";
 
 
     if (ntohs(eth_header->ether_type) == ETHERTYPE_ARP) {
 
-        Ui::arppacket *arp_header=(struct Ui::arppacket *)(buffer+sizeof(ether_header));
-        myheader_ip->Internetl="ARP";
+       Ui::arppacket *arp_header=(struct Ui::arppacket *)(buffer+sizeof(ether_header));
+       myheader_ip->Internetl="ARP";
        myheader_ip->Transportl="ARP";
+
+       myheader_ip->Dadder= destMacStr;
+       myheader_ip->Sadder= sourceMacStr;
+
+
     }
+    if(ntohs(eth_header->ether_type)==ETHERTYPE_REVARP ){
+     //   Ui::arppacket *arp_header=(struct Ui::arppacket *)(buffer+sizeof(ether_header));
+        myheader_ip->Internetl="ARP";
+        myheader_ip->Transportl="ARP";
+    }
+    if(ntohs(eth_header->ether_type)==ETHERTYPE_LOOPBACK){
+       // Ui::arppacket *arp_header=(struct Ui::arppacket *)(buffer+sizeof(ether_header));
+        myheader_ip->Internetl="LoopBack";
+        myheader_ip->Transportl="LoopBack";
+    }
+    if(ntohs(eth_header->ether_type)==ETHERTYPE_PUP ){
+        myheader_ip->Internetl="PUP";
+        myheader_ip->Transportl="PUP";
+
+
+    }
+    if(ntohs(eth_header->ether_type)==ETHERTYPE_SPRITE ){
+        myheader_ip->Internetl="SPRITE";
+        myheader_ip->Transportl="SPRITE";
+    }
+    if(ntohs(eth_header->ether_type)==ETHERTYPE_AARP ){
+        myheader_ip->Internetl="AARP";
+        myheader_ip->Transportl="AARP";
+    }
+    if(ntohs(eth_header->ether_type)==ETHERTYPE_AT ){
+        myheader_ip->Internetl="AT";
+        myheader_ip->Transportl="AT";
+    }
+    if(ntohs(eth_header->ether_type)==ETHERTYPE_VLAN ){
+        myheader_ip->Internetl="VLAN";
+        myheader_ip->Transportl="VLAN";
+    }
+    if(ntohs(eth_header->ether_type)==ETHERTYPE_TRAIL){
+        myheader_ip->Internetl="TRAIL";
+        myheader_ip->Transportl="TRAIL";
+    }
+    if(ntohs(eth_header->ether_type)==ETHERTYPE_NTRAILER){
+        myheader_ip->Internetl="NTRAILER";
+        myheader_ip->Transportl="NTRAILER";
+    }
+
+
+
+
+
 
     if(ntohs(eth_header->ether_type)==ETHERTYPE_IP ){
 
-            myheader_ip->Internetl="IPv4";
+        myheader_ip->Internetl="IPv4";
+        myheader_ip->Transportl="IPv4";
 
             iphdr *ip_header=(struct iphdr *)(buffer+sizeof(ether_header));
+
              struct protoent *proto_info = getprotobynumber(ip_header->protocol);
             if (proto_info != nullptr) {
                  if(proto_info->p_name!=nullptr){
                     int len=ip_header->ihl * 4;
                     myheader_ip->Sadder=inet_ntoa(*(struct in_addr *)&(ip_header->saddr));
-                     myheader_ip->Dadder=inet_ntoa(*(struct in_addr *)&(ip_header->daddr));
+                    myheader_ip->Dadder=inet_ntoa(*(struct in_addr *)&(ip_header->daddr));
                     myheader_ip->Transportl=proto_info->p_name;
 
 
              if(strcmp(proto_info->p_name,"tcp")==0){
 
-                tcphdr *tcp_header=(struct tcphdr *)(buffer+sizeof(ether_header)+len);
-                 myheader_ip->sport=ntohs(tcp_header->th_sport);
+               tcphdr *tcp_header=(struct tcphdr *)(buffer+sizeof(ether_header)+len);
+
+                myheader_ip->sport=ntohs(tcp_header->th_sport);
                 myheader_ip->dport=ntohs(tcp_header->th_dport);
+                myheader_ip->data=buffer+sizeof(ether_header)+len;
                 if (!Snifed::checkPort(ntohs(tcp_header->th_sport)).empty()) {
-                    myheader_ip->msg = Snifed::checkPort(ntohs(tcp_header->th_sport)); // Move ownership to myheader_ip->msg
+                    myheader_ip->msg = Snifed::checkPort(ntohs(tcp_header->th_sport));
+
+
+
+
+
                 }else{
-                    myheader_ip->msg = Snifed::checkPort(ntohs(tcp_header->th_dport)); // Move ownership to myheader_ip->msg
+                    myheader_ip->msg = Snifed::checkPort(ntohs(tcp_header->th_dport));
                 }
+
 
             }
              if(strcmp(proto_info->p_name,"udp")==0){
@@ -65,21 +127,23 @@ Snifed::Snifed(char *buffer)
                 myheader_ip->dport=ntohs(udp_header->uh_dport);
 
                 if (!Snifed::checkPort(ntohs(udp_header->uh_sport)).empty()) {
-                    myheader_ip->msg = Snifed::checkPort(ntohs(udp_header->uh_sport)); // Move ownership to myheader_ip->msg
+                    myheader_ip->msg = Snifed::checkPort(ntohs(udp_header->uh_sport));
                 }else{
-                    myheader_ip->msg = Snifed::checkPort(ntohs(udp_header->uh_dport)); // Move ownership to myheader_ip->msg
+                    myheader_ip->msg = Snifed::checkPort(ntohs(udp_header->uh_dport));
+
+                }
+                if(strcmp(proto_info->p_name,"IGMP")==0 || strcmp(proto_info->p_name,"igmp")==0){
+                    myheader_ip->Transportl = "igmp";
+
+
+
 
                 }
 
 
 
+
              }
-                 }
-
-
-                 else {
-            ip_header=nullptr;
-            proto_info=nullptr;
                  }
 
             }
@@ -141,8 +205,6 @@ Snifed::Snifed(char *buffer)
 
 
 
-            // Handle various IPv6 next header types
-
             if (proto_info != nullptr) {
             char src_ipv6_str[INET6_ADDRSTRLEN];
             char dst_ipv6_str[INET6_ADDRSTRLEN];
@@ -182,63 +244,9 @@ Snifed::Snifed(char *buffer)
 }
 
 
-/*
-Snifed::Snifed(char *buffer) {
-    ether_header *eth_header = (ether_header *)buffer;
-
-    if (eth_header->ether_type == ETHERTYPE_ARP) {
-        // Handle ARP packets if needed
-    }
-
-    if (ntohs(eth_header->ether_type) == ETHERTYPE_IP) {
-        Snifed::myheader_ip = (myip *)malloc(sizeof(myip));
-        if (Snifed::myheader_ip != nullptr) {  // Check if memory allocation is successful
-            iphdr *ip_header = (struct iphdr *)(buffer + sizeof(char) * 14);
-            int len = ip_header->ihl * 4;
-            struct protoent *proto_info = getprotobynumber(ip_header->protocol);
-
-            if (proto_info != nullptr) {
-                strcpy(Snifed::myheader_ip->Sadder, inet_ntoa(*(struct in_addr *)&(ip_header->saddr)));
-                strcpy(Snifed::myheader_ip->Dadder, inet_ntoa(*(struct in_addr *)&(ip_header->daddr)));
-
-                // Make sure to allocate enough space for the protocol name
-                Snifed::myheader_ip->Pname = (char *)malloc(strlen(proto_info->p_name) + 1);
-                if (Snifed::myheader_ip->Pname != nullptr) {
-                    strcpy(Snifed::myheader_ip->Pname, proto_info->p_name);
-                } else {
-                    // Handle memory allocation failure for Pname
-                }
-            } else {
-                // Handle protocol info not found
-            }
-        } else {
-            // Handle memory allocation failure for myheader_ip
-        }
-    }
-}*/
-/*
-            if(strcmp(proto_info->p_name,"tcp")==0){
-                //tcphdr *tcp_header=(struct tcphdr *)(ip_header+sizeof(char)*len);
-                //    Snifed::myheader_ip->Pname=(char*)malloc(sizeof(char)*6);
-                //  strcpy(Snifed::myheader_ip->Pname,"tcp");
-                // Snifed::myheader_ip->msg= (char*)malloc(sizeof(char)*strlen(Snifed::checkPort(ntohs(tcp_header->th_sport))));
-                //  Snifed::myheader_ip->msg=Snifed::checkPort(ntohs(tcp_header->th_sport));
-                //    Snifed::myheader_ip->port=ntohs(tcp_header->th_sport);
-            }
-
-            if(strcmp(proto_info->p_name,"udp")==0){
-                // udphdr *udp_header=(struct udphdr *)(ip_header+sizeof(char)*len);
-                // Snifed::myheader_ip->Pname=(char*)malloc(sizeof(char)*6);
-                //strcpy(Snifed::myheader_ip->Pname,"udp");
-                //   Snifed::myheader_ip->msg= (char*)malloc(sizeof(char)*strlen(Snifed::checkPort(ntohs(udp_header->uh_sport))));
-                //     Snifed::myheader_ip->msg=Snifed::checkPort(ntohs(udp_header->uh_sport));
-                //  Snifed::myheader_ip->port=ntohs(udp_header->uh_sport);
-            }
-            */
-
 Ui::myip *Snifed::getIPhdr() {
 
-    return myheader_ip.get(); // Return the local myip object by value (copy)
+    return myheader_ip.get();
 }
 
 
