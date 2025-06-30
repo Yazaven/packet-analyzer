@@ -43,4 +43,4 @@ private:
     std::unique_ptr<Ui::myip> myheader_ip;
 };
 
-#endif // SNIFED_H
+#endif 
