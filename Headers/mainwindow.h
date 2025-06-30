@@ -8,7 +8,7 @@
 #include <QTableWidget>
 #include "./ui_mainwindow.h"
 #include "snifed.h"
-#include <QResizeEvent> // Include the header for QResizeEvent
+#include <QResizeEvent> 
 #include "./ui_mainwindow.h"
 #include <QTableWidget>
 #include "snifed.h"
@@ -50,5 +50,5 @@ private:
     QVBoxLayout *layout;
 
 };
-#endif // MAINWINDOW_H
+#endif 
 
