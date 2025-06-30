@@ -17,4 +17,4 @@ private:
     QTableWidget *tableWidget;
 };
 
-#endif // MYTABLE_H
+#endif 
