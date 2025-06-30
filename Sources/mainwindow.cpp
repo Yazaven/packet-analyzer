@@ -1,7 +1,7 @@
 #include "Headers/mainwindow.h"
 #include "./ui_mainwindow.h"
 #include "Headers/snifed.h"
-#include <QResizeEvent> // Include the header for QResizeEvent
+#include <QResizeEvent> 
 #include "./ui_mainwindow.h"
 #include <QTableWidget>
 #include "Headers/snifed.h"
@@ -49,21 +49,13 @@ void* snifferThread(void* data) {
             if(size>0){
 
                 std::unique_ptr<Snifed> ptr = std::make_unique<Snifed>(buffer);
-
-
-                //  memcpy(test.Pname,sniffer->getIPhdr().Pname,sizeof(char)*4);
-                //  if(strncmp(test.Pname,"tcp",3)){
                 if(ptr->getIPhdr()!=nullptr){
                     std::unique_ptr<Ui::myip> ipData = std::make_unique<Ui::myip>(*ptr->getIPhdr());
                     Ui::myip* myipInstance = new Ui::myip(ptr->getIPhdr());
-                    threadData->mainwin->ipvector.push_back(std::move(myipInstance)); // Move ownership to the vector
+                    threadData->mainwin->ipvector.push_back(std::move(myipInstance)); 
 
                     if(!host.empty()){
                         if(isAscii(host) && isAscii(ptr->getIPhdr()->Sadder)){
-                            // threadData->tableWidget->setItem(i, 2, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Sadder)));
-                            //   threadData->tableWidget->setItem(i, 3, new QTableWidgetItem(QString::fromStdString(host)));
-
-                            //   i++;
                         }
                         if(host==ptr->getIPhdr()->Sadder) {
                             threadData->tableWidget->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(ptr->getIPhdr()->Transportl)));
@@ -77,8 +69,6 @@ void* snifferThread(void* data) {
                             }
                         }
                         continue;
-
-
                     }
 
                     if(minport!=0){
@@ -222,7 +212,6 @@ void* snifferThread(void* data) {
 
                 }
             }
-            // threadData->tableWidget->setItem(0, 1, new QTableWidgetItem(QString(*test.Pname)));
         }
     }
     close(fd);
@@ -240,14 +229,12 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent)
     ui->setupUi(this);
 
 
-  //  ui->tableWidget->setGeometry(10, 10, 10, 10);
     ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeMode::Stretch);
 
     std::vector<std::vector<Ui::myip>> ipvector;
     ThreadData* threadData = new ThreadData;
     threadData->tableWidget = ui->tableWidget;
     threadData->mainwin = this;
-    // eCreate a thread for the sniffer function
     pthread_t thread;
     int result = pthread_create(&thread, nullptr, snifferThread, threadData);
 
