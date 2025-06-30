@@ -51,7 +51,6 @@ typedef struct myip{
     bool  MF;
 
     myip(Ui::myip* other) {
-        // Copy or initialize members based on the 'other' instance
         Linkl = other->Linkl;
         Internetl = other->Internetl;
         Transportl = other->Transportl;
@@ -65,13 +64,9 @@ typedef struct myip{
         dport = other->dport;
         msg = other->msg;
         size = other->size;
-        // Dynamically allocate memory for 'data' if needed
         DF = other->DF;
     }
     ~myip() {
-        // No need to explicitly release Pname, std::unique_ptr will handle it.
-
-        // Release any other dynamically allocated resources if needed
     }
 
 }myip;
@@ -92,4 +87,4 @@ private:
     Ui::packetd *ui;
 };
 
-#endif // PACKETD_H
+#endif 
