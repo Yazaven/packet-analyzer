@@ -7,7 +7,7 @@ The tool also includes a responsive **Qt-based GUI** that displays parsed packet
 ---
 
 ## ✨ Features
- 
+
 - 🧵 **Multithreaded packet capture** using POSIX threads for responsive and efficient traffic processing.
 - 📡 **Raw socket interface** to capture traffic from the link layer.
 - 🧠 **Deep packet inspection** from Ethernet headers to application layer protocols.
