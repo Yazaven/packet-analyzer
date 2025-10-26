@@ -4,7 +4,7 @@ Snifed is a **real-time, multithreaded network traffic analyzer** built in **C++
 
 The tool also includes a responsive **Qt-based GUI** that displays parsed packet data live, with features like MAC/IP address extraction, protocol classification, and advanced filtering.
 
----
+--- 
 
 ## ✨ Features
 
