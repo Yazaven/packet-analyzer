@@ -3,7 +3,7 @@
 Snifed is a **real-time, multithreaded network traffic analyzer** built in **C++** for **Linux**. It captures raw packets at the Ethernet layer and dissects them across the full stack — including ARP, IPv4/IPv6, TCP/UDP, and common application protocols like **HTTPS, DNS, FTP, and more**.
 
 The tool also includes a responsive **Qt-based GUI** that displays parsed packet data live, with features like MAC/IP address extraction, protocol classification, and advanced filtering.
-
+ 
 --- 
 
 ## ✨ Features
