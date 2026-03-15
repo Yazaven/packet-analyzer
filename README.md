@@ -1,49 +1,47 @@
-# 🕵️‍♂️ Snifed - Multithreaded Linux Network Traffic Analyzer in C++
+# Snifed: Multithreaded Linux Network Traffic Analyzer
 
-Snifed is a **real-time, multithreaded network traffic analyzer** built in **C++** for **Linux**. It captures raw packets at the Ethernet layer and dissects them across the full stack — including ARP, IPv4/IPv6, TCP/UDP, and common application protocols like **HTTPS, DNS, FTP, and more**.
+Snifed is a high-performance network analysis tool built for Linux using C++. It captures raw packets at the Ethernet layer and provides deep inspection across the networking stack, covering ARP, IPv4, IPv6, TCP, UDP, and application-layer protocols such as HTTPS, DNS, and FTP.
 
-The tool also includes a responsive **Qt-based GUI** that displays parsed packet data live, with features like MAC/IP address extraction, protocol classification, and advanced filtering.
- 
---- 
-
-## ✨ Features
-  
-- 🧵 **Multithreaded packet capture** using POSIX threads for responsive and efficient traffic processing.
-- 📡 **Raw socket interface** to capture traffic from the link layer.
-- 🧠 **Deep packet inspection** from Ethernet headers to application layer protocols.
-- 🌐 **IPv4 and IPv6 support**, including ICMP, TCP, UDP parsing.
-- 📦 **Application protocol identification** by port (e.g., HTTP, HTTPS, DNS, SSH, FTP, etc.).
-- 🖥️ **Qt GUI** with real-time packet visualization and protocol-aware filtering.
-- 🔍 **Displays key metadata**: MAC addresses, IPs, port numbers, protocol names, and protocol-specific info.
+The project features a Qt-based interface that handles live data streams, offering real-time protocol classification, MAC/IP extraction, and customizable filtering.
 
 ---
 
-## 🧱 Built With
+## Key Features
 
-- **C++**
-- **Qt 5/6**
-- **Raw sockets (AF_PACKET)**
-- **POSIX Threads**
-- **Linux-only** (due to raw socket use and `ether_header` structs)
-
----
-
-## 🛠️ Requirements
-
-- Linux OS (Ubuntu, Debian, etc.)
-- Qt 5 or Qt 6 (`libqt5widgets`, `qtbase5-dev`, etc.)
-- g++ compiler
-- Root privileges (to access raw sockets)
+* **Parallel Processing:** Uses POSIX threads to decouple packet capture from the UI, ensuring the application remains responsive under high traffic loads.
+* **Low-Level Capture:** Utilizes a raw socket interface to intercept traffic directly from the link layer.
+* **Full-Stack Inspection:** Decodes data from Ethernet headers through to the application layer.
+* **Dual-Stack Support:** Native parsing for both IPv4 and IPv6 traffic.
+* **Protocol Identification:** Automatically identifies common services like SSH, HTTP, and DNS based on port signatures.
+* **Qt Interface:** A dedicated GUI for visualizing packet metadata and filtering specific traffic streams.
 
 ---
 
-## 🔧 Build Instructions
+## Technical Stack
+
+* **Language:** C++
+* **Framework:** Qt 5/6
+* **Networking:** Raw sockets (`AF_PACKET`)
+* **Concurrency:** POSIX Threads
+* **Platform:** Linux (Relies on `ether_header` structs and Linux-specific socket APIs)
+
+---
+
+## System Requirements
+
+* **Operating System:** Any modern Linux distribution (Ubuntu, Debian, Fedora, etc.)
+* **Dependencies:** Qt 5 or 6 development libraries (`qtbase5-dev` or equivalent)
+* **Compiler:** g++
+* **Permissions:** Root privileges are required to open raw sockets.
+
+---
+
+## Installation and Setup
 
 ```bash
 git clone https://github.com/yourusername/snifed.git
 cd snifed
-mkdir build
-cd build
+mkdir build && cd build
 cmake ..
 make
 sudo ./snifed
